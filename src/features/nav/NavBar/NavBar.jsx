@@ -33,7 +33,7 @@ class NavBar extends Component {
                     <Menu.Item as={NavLink} to="/test" name="Test" />
                     {authenticated && <Menu.Item as={NavLink} to="/people" name="People" />}
                     {authenticated && <Menu.Item>
-                        <Button floated="right" positive inverted content="Create Event" />
+                        <Button as={Link} to='/createEvent' floated="right" positive inverted content="Create Event" />
                     </Menu.Item>}
                     {authenticated ? <SignedInMenu signOut={this.signOutHandler}/> : <SignedOutMenu signIn={this.signInHandler}/>}
                 </Container>
