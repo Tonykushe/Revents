@@ -1,7 +1,8 @@
-import { INCREMENT_COUNTER, DECREMENT_COUNTER } from "./testConstants";
+import { INCREMENT_COUNTER, DECREMENT_COUNTER, COUNTER_ACTION_STARTED, COUNTER_ACTION_FINISHED } from "./testConstants";
 
 const initialState = {
-    data: 42
+    data: 42,
+    loading: false
 }
 
 const testReducer = (state = initialState, action) => {
@@ -15,6 +16,17 @@ const testReducer = (state = initialState, action) => {
             return {
                 ...state,
                 data: state.data - 1
+            }
+        case COUNTER_ACTION_STARTED:
+            return {
+                ...state,
+                loading: true
+            }
+
+        case COUNTER_ACTION_FINISHED:
+            return {
+                ...state,
+                loading: false
             }
         default:
            return state;
