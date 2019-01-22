@@ -18,8 +18,8 @@ const actions = {
 
 class EventDashboard extends Component {
 
-    deleteEventHandler = (eventID) => () => {
-        this.props.deleteEvent(eventID)
+    deleteEventHandler = (eventId) => () => {
+        this.props.deleteEvent(eventId)
     }
     render() {
         const {events, loading} = this.props
