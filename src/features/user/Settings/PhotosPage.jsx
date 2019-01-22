@@ -7,7 +7,7 @@ import Dropzone from 'react-dropzone';
 import Cropper from 'react-cropper'
 import 'cropperjs/dist/cropper.css';
 import { toastr } from "react-redux-toastr";
-import {uploadProfileImage} from '../UserActions'
+import {uploadProfileImage, deletePhoto} from '../UserActions'
 
 
 const query = ({auth}) => {
@@ -23,12 +23,14 @@ const query = ({auth}) => {
 
 
 const actions = {
-    uploadProfileImage
+    uploadProfileImage, 
+    deletePhoto
 }
 
 const mapState = (state) => ({
     auth: state.firebase.auth,
-    profile: state.firebase.profile
+    profile: state.firebase.profile,
+    photos: state.firestore.ordered.photos
 })
 
 class PhotosPage extends Component {
@@ -48,6 +50,14 @@ class PhotosPage extends Component {
             console.log(error);
             toastr.error('Oops', error.message)
             
+        }
+    }
+
+    handlePhotoDelete = (photo) => () => {
+        try {
+            this.props.deletePhoto(photo);
+        } catch (error) {
+            toastr.error('Oops!', error.message)
         }
     }
 
@@ -83,6 +93,13 @@ class PhotosPage extends Component {
 
 
     render() {
+        const  { photos, profile } = this.props
+        let filteredPhotos;
+        if (photos) {
+            filteredPhotos = photos.filter(photo => {
+                return photo.url !== profile.photoURL
+            })
+        }
         return (
             <Segment>
                 <Header dividing size='large' content='Your Photos' />
@@ -138,19 +155,19 @@ class PhotosPage extends Component {
 
                 <Card.Group itemsPerRow={5}>
                     <Card>
-                        <Image src='https://randomuser.me/api/portraits/women/34.jpg'/>
+                        <Image src={profile.photoURL}/>
                         <Button positive>Main Photo</Button>
                     </Card>
-
-                        <Card >
-                            <Image
-                                src='https://randomuser.me/api/portraits/men/6.jpg'
-                            />
+                    {photos && filteredPhotos.map((photo) => (
+                        <Card key={photo.id}>
+                            <Image src={photo.url}/>
                             <div className='ui two buttons'>
                                 <Button basic color='green'>Main</Button>
-                                <Button basic icon='trash' color='red' />
+                                <Button onClick={this.handlePhotoDelete(photo)} basic icon='trash' color='red' />
                             </div>
                         </Card>
+                    ))}
+                    
                 </Card.Group>
             </Segment>
         );
