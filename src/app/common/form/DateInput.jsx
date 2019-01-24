@@ -9,7 +9,7 @@ const DateInput = ({input: {value, onChange, onBlur, ...restInput}, width, place
         value = moment(value, 'X')
     }
     return (
-            <Form.Field error={touched && !!error}>
+            <Form.Field error={touched && !!error} width={width}>
                 <DatePicker 
                     {...rest}
                     placeholderText={placeholder}
