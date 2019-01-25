@@ -3,7 +3,6 @@ import React, { Component } from 'react'
 import { connect } from "react-redux";
 import { withFirestore } from "react-redux-firebase";
 import { reduxForm, Field } from "redux-form";
-import moment from 'moment';
 import { geocodeByAddress, getLatLng } from "react-places-autocomplete";
 import Script from 'react-load-script'
 import { composeValidators, combineValidators, isRequired, hasLengthGreaterThan } from "revalidate";
@@ -65,12 +64,13 @@ class EventForm extends Component {
     async componentDidMount() {
         const { firestore, match } = this.props;
         await firestore.setListener(`events/${match.params.id}`);
-        // if (event.exists) {
-        //     this.setState({
-        //         venueLatLng: event.data().venueLatLng
-        //     })
-        // }
     }
+
+    async componentWillMount() {
+        const { firestore, match } = this.props;
+        await firestore.unsetListener(`events/${match.params.id}`);
+    }
+    
 
 
     handleScriptLoaded = () => this.setState({ scriptLoaded: true })

@@ -16,7 +16,8 @@ const mapState = (state, ownProps) => {
         event = state.firestore.ordered.events[0];
     }
     return {
-        event
+        event,
+        auth: state.firebase.auth
     }
 }
 
@@ -35,12 +36,14 @@ class EventDetail extends Component {
 
 
     render() {
-        const {event} = this.props
+        const {event, auth} = this.props
         const attendees = event && event.attendees && objectToArray(event.attendees)
+        const isHost = event.hostUid === auth.uid;
+        const isGoing = attendees && attendees.some(a => a.id === auth.uid)
         return (
             <Grid>
                 <Grid.Column width={10}>
-                    <EventDetailHeader event={event} />
+                    <EventDetailHeader event={event} isHost={isHost} isGoing={isGoing}/>
                     <EventDetailInfo event={event} />
                     <EventDetailChat />
 
