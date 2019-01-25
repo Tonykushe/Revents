@@ -8,7 +8,7 @@ import { geocodeByAddress, getLatLng } from "react-places-autocomplete";
 import Script from 'react-load-script'
 import { composeValidators, combineValidators, isRequired, hasLengthGreaterThan } from "revalidate";
 import { Segment, Form, Button, Grid, Header } from "semantic-ui-react";
-import { createEvent, updateEvent } from "../eventActions";
+import { createEvent, updateEvent, cancelToggle } from "../eventActions";
 import TextInput from '../../../app/common/form/TextInput'
 import TextArea from '../../../app/common/form/TextArea'
 import SelectInput from '../../../app/common/form/SelectInput'
@@ -23,13 +23,15 @@ const mapState = (state) => {
     }
 
     return {
-        initialValues: event
+        initialValues: event,
+        event
     }
 }
 
 const actions = {
     createEvent, 
-    updateEvent
+    updateEvent,
+    cancelToggle
 }
 const category = [
     {key: 'drinks', text: 'Drinks', value: 'drinks'},
@@ -62,12 +64,12 @@ class EventForm extends Component {
 
     async componentDidMount() {
         const { firestore, match } = this.props;
-        let event = await firestore.get(`events/${match.params.id}`);
-        if (event.exists) {
-            this.setState({
-                venueLatLng: event.data().venueLatLng
-            })
-        }
+        await firestore.setListener(`events/${match.params.id}`);
+        // if (event.exists) {
+        //     this.setState({
+        //         venueLatLng: event.data().venueLatLng
+        //     })
+        // }
     }
 
 
@@ -102,6 +104,9 @@ class EventForm extends Component {
     onFormSubmit = values => {
         values.venueLatLng = this.state.venueLatLng
         if (this.props.initialValues.id) {
+            if (Object.keys(values.venueLatLng).length === 0) {
+                values.venueLatLng = this.props.event.venueLatLng
+            }
             this.props.updateEvent(values)
             this.props.history.goBack();
         } else {
@@ -112,7 +117,7 @@ class EventForm extends Component {
     }
 
     render() {
-        const {invalid, submitting, pristine} = this.props;
+        const {invalid, submitting, pristine, event, cancelToggle} = this.props;
         return (
             <Grid>
                 <Script
@@ -167,6 +172,13 @@ class EventForm extends Component {
                                 Submit
                             </Button>
                             <Button type="button" onClick={this.props.history.goBack}>Cancel</Button>
+                            <Button
+                                onClick={() => cancelToggle(!event.cancelled, event.id)}
+                                type='button'
+                                color={event.cancelled ? 'green' : 'red'}
+                                floated='right'
+                                content={event.cancelled ? 'Reactivate event' : 'Cancel event'}
+                            />
                         </Form>
                     </Segment>
                 </Grid.Column>
