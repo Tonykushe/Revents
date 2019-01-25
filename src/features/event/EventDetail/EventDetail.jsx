@@ -1,14 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux";
 import { withFirestore } from "react-redux-firebase";
-import { toastr } from "react-redux-toastr";
 import { Grid } from "semantic-ui-react";
 import EventDetailHeader from './EventDetailHeader';
 import EventDetailSidebar from './EventDetailSidebar';
 import EventDetailChat from "./EventDetailChat";
 import EventDetailInfo from './EventDetailInfo';
 import { objectToArray } from "../../../app/utils/helpers";
-import { goingToEvent } from "../../user/UserActions";
+import { goingToEvent, cancelGoingToEvent } from "../../user/UserActions";
 
 const mapState = (state, ownProps) => {
     let event = {}
@@ -23,7 +22,8 @@ const mapState = (state, ownProps) => {
 }
 
 const actions = {
-    goingToEvent
+    goingToEvent,
+    cancelGoingToEvent
 }
 
 
@@ -43,14 +43,20 @@ class EventDetail extends Component {
 
 
     render() {
-        const {event, auth, goingToEvent} = this.props
+        const {event, auth, goingToEvent, cancelGoingToEvent} = this.props
         const attendees = event && event.attendees && objectToArray(event.attendees)
         const isHost = event.hostUid === auth.uid;
         const isGoing = attendees && attendees.some(a => a.id === auth.uid)
         return (
             <Grid>
                 <Grid.Column width={10}>
-                    <EventDetailHeader event={event} isHost={isHost} isGoing={isGoing} goingToEvent={goingToEvent}/>
+                    <EventDetailHeader 
+                        event={event} 
+                        isHost={isHost} 
+                        isGoing={isGoing} 
+                        goingToEvent={goingToEvent}
+                        cancelGoingToEvent={cancelGoingToEvent}
+                    />
                     <EventDetailInfo event={event} />
                     <EventDetailChat />
 
