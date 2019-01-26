@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Grid } from "semantic-ui-react";
+import { Grid, Button } from "semantic-ui-react";
 import { getEventsForDashboard } from "../eventActions";
-import { firestoreConnect, isLoaded, isEmpty } from "react-redux-firebase";
+import { firestoreConnect } from "react-redux-firebase";
 import EventList from '../EventList/EventList'
 import EventActivity from '../EventActivity/EventActivity'
 import LoadingComponent from "../../../app/layout/LoadingComponent";
@@ -19,19 +19,57 @@ const actions = {
 
 class EventDashboard extends Component {
 
-    componentDidMount() {
-        this.props.getEventsForDashboard();
+    state = {
+        moreEvents: false,
+        loadingInitial: true,
+        loadedEvents: []
+    }
+
+    async componentDidMount() {
+        let next = await this.props.getEventsForDashboard();
+
+        if (next && next.docs && next.docs.length > 1) {
+            this.setState({
+                moreEvents: true,
+                loadingInitial: false
+            })
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.events !== nextProps.events) {
+            this.setState({
+                loadedEvents: [...this.state.loadedEvents, ...nextProps.events]
+            })
+        }
+    }
+
+    getNextEvents = async () => {
+        const { events } = this.props;
+        const lastEvent = events && events[events.length -1];
+        let next = await this.props.getEventsForDashboard(lastEvent);
+        if (next && next.docs && next.docs.length <= 1) {
+            this.setState({
+                moreEvents: false
+            })
+        }
     }
 
     render() {
-        const {events, loading} = this.props
-        if (loading) return  <LoadingComponent inverted={true}/>
+        const {loading} = this.props
+        if (this.state.loadingInitial) return  <LoadingComponent inverted={true}/>
         
         return (
             <Grid>
                 <Grid.Column width={10}>
-                    <EventList  
-                        events={events}/>
+                    <EventList events={this.state.loadedEvents}/>
+                    <Button 
+                        loading={loading}
+                        onClick={this.getNextEvents}
+                        disabled={!this.state.moreEvents}
+                        content='More' 
+                        color='green' 
+                        floated='right'/>
                 </Grid.Column>
 
                 <Grid.Column width={6}>
