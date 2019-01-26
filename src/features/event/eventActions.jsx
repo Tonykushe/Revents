@@ -71,8 +71,8 @@ export const getEventsForDashboard = (lastEvent) =>
             let startAfter = lastEvent && await firestore.collection('events').doc(lastEvent.id).get()
             let query;
 
-            lastEvent ? query = eventsRef.orderBy('date').startAfter(startAfter).limit(2)
-                : query = eventsRef.orderBy('date').limit(2)
+            lastEvent ? query = eventsRef.where('date', '>=', today).orderBy('date').startAfter(startAfter).limit(2)
+                : query = eventsRef.where('date', '>=', today).orderBy('date').limit(2)
 
                     // .where('date', '>=', today)
 
