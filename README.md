@@ -1,9 +1,17 @@
 ![Logo of the project](./images/logo.sample.png)
 
 # Revents &middot; [![npm](https://img.shields.io/npm/v/npm.svg?style=flat-square)](https://www.npmjs.com/package/npm) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/your/your-project/blob/master/LICENSE)
-> Additional information or tag line
+> Revents is an event meetup website that people can use to create or attend events. 
+> Link to the live website : https://revents-215209.firebaseapp.com/
 
-Revents is an event meetup website that people can use to create or attend events
+> Here are come features implemented in this project
+ - Login and Register functionality using Firebase authentication
+ - Adding social login for Facebook and Google into the application
+ - Google maps and Places autocomplete integration
+ - Photo uploading using drag and drop, with resizing and cropping of the images before upload
+ - Paging, Sorting and Filtering with Firestore
+ - Creating reusable form components with Redux forms
+ - Building a great looking application with Semantic UI
 
 ## Installing / Getting started
 

@@ -58,7 +58,7 @@ class EventDetail extends Component {
                         cancelGoingToEvent={cancelGoingToEvent}
                     />
                     <EventDetailInfo event={event} />
-                    <EventDetailChat />
+                    {/* <EventDetailChat /> */}
 
                 </Grid.Column>
                 <Grid.Column width={6}>

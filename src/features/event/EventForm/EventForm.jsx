@@ -172,6 +172,7 @@ class EventForm extends Component {
                                 Submit
                             </Button>
                             <Button type="button" onClick={this.props.history.goBack}>Cancel</Button>
+                            {event.id && 
                             <Button
                                 onClick={() => cancelToggle(!event.cancelled, event.id)}
                                 type='button'
@@ -179,6 +180,7 @@ class EventForm extends Component {
                                 floated='right'
                                 content={event.cancelled ? 'Reactivate event' : 'Cancel event'}
                             />
+                            }
                         </Form>
                     </Segment>
                 </Grid.Column>
