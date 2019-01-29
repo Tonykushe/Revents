@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from "react-redux";
-import { withFirestore, firebaseConnect } from "react-redux-firebase";
+import { withFirestore, firebaseConnect, isEmpty } from "react-redux-firebase";
 import { compose } from "redux";
 import { Grid } from "semantic-ui-react";
 import EventDetailHeader from './EventDetailHeader';
@@ -19,7 +19,8 @@ const mapState = (state, ownProps) => {
     }
     return {
         event,
-        auth: state.firebase.auth
+        auth: state.firebase.auth,
+        eventChat: !isEmpty(state.firebase.data.event_chat) && objectToArray(state.firebase.data.event_chat[ownProps.match.params.id])
     }
 }
 
@@ -46,7 +47,7 @@ class EventDetail extends Component {
 
 
     render() {
-        const {event, auth, goingToEvent, cancelGoingToEvent, addEventComment} = this.props
+        const {event, auth, goingToEvent, cancelGoingToEvent, addEventComment, eventChat} = this.props
         const attendees = event && event.attendees && objectToArray(event.attendees)
         const isHost = event.hostUid === auth.uid;
         const isGoing = attendees && attendees.some(a => a.id === auth.uid)
@@ -61,7 +62,7 @@ class EventDetail extends Component {
                         cancelGoingToEvent={cancelGoingToEvent}
                     />
                     <EventDetailInfo event={event} />
-                    <EventDetailChat addEventComment={addEventComment} eventId={event.id}/>
+                    <EventDetailChat eventChat={eventChat} addEventComment={addEventComment} eventId={event.id}/>
 
                 </Grid.Column>
                 <Grid.Column width={6}>
@@ -75,6 +76,6 @@ class EventDetail extends Component {
 
 export default compose(
     withFirestore,
-    (connect(mapState, actions),
+    connect(mapState, actions),
     firebaseConnect((props) => ([`event_chat/${props.match.params.id}`]))
-))(EventDetail)
+)(EventDetail)
